@@ -1,8 +1,9 @@
 const db = require('../Database/connection.js')
 const {DataTypes} = require('sequelize')
+const Recipe = require('../Models/Recipe')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const {InvalidCredentials, Unauthorized, TokenExpired} = require('../Errors/errors.js')
+const {InvalidCredentials, Unauthorized, TokenExpired, RecipeError} = require('../Errors/errors.js')
 
 const User = db.define('User',{
   email:{
@@ -23,6 +24,8 @@ const User = db.define('User',{
     allowNull: false
   }
 })
+User.hasMany(Recipe)
+Recipe.belongsTo(User)
 
 User.beforeCreate( (user, options) =>{
   user.password = bcrypt.hashSync(user.password, 10)
